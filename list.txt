@@ -82,6 +82,7 @@ local function mimicObject(instance,exclusions,children) -- exclusions must be i
 	return mimic
 end
 function check(tablee,ignorelist)
+    local newtablee = {}
 	for i,v in pairs(tablee) do
 		if typeof(v) == "Instance" then
 			for i,v in pairs(v:GetDescendants()) do
@@ -89,9 +90,9 @@ function check(tablee,ignorelist)
 					table.insert(ignorelist, v)
 				end
 			end
-			tablee[i] = mimicObject(v,ignorelist,true)
+			newtablee[i] = mimicObject(v,ignorelist,true)
             else
-                tablee[i] = v
+                newtablee[i] = v
 		end
 	end
 	return tablee
@@ -111,7 +112,7 @@ local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
     if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
-        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and not (v.Name == "UpdateLabel") then
+        if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") then
             table.insert(rems, v)
         end
     end
@@ -149,6 +150,7 @@ for i,rem in pairs(rems) do
             rem:FireServer(v)
             rem:FireServer(nil,nil,nil,moduleid)
             rem:FireServer(v,v,v,v,v,v,v)
+            v = forrealsies[i]
             rem:FireServer(nil,nil,nil,v.Parent)
             rem:FireServer(nil,nil,v.Parent)
             rem:FireServer(nil,v.Parent)
@@ -176,6 +178,7 @@ rem:InvokeServer(nil,v)
 rem:InvokeServer(v)
 rem:InvokeServer(nil,nil,nil,moduleid)
 rem:InvokeServer(v,v,v,v,v,v,v)
+v = forrealsies[i]
 rem:InvokeServer(nil,nil,nil,v.Parent)
 rem:InvokeServer(nil,nil,v.Parent)
 rem:InvokeServer(nil,v.Parent)
