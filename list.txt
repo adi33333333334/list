@@ -1,4 +1,4 @@
-local urlforexe = ""
+local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
 local HttpService = game:GetService("HttpService")
 local apiDump,apiDumpUrl
 if not getgenv().apidumpisloaded then
@@ -127,8 +127,8 @@ end
 fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
-        table.insert(getgenv().excl, )
-        queue_on_teleport()
+        table.insert(getgenv().excl, remi)
+        queue_on_teleport(game:HttpGet(urlforexe))
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
