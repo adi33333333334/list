@@ -109,7 +109,7 @@ local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
     if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
-        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" then
+        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and not v.Name == "UpdateLabel" then
             table.insert(rems, v)
         end
     end
