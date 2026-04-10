@@ -128,10 +128,10 @@ fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
         table.insert(getgenv().excl, remi)
-        queue_on_teleport(game:HttpGet(urlforexe))
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
+queue_on_teleport(game:HttpGet(urlforexe))
 hookfunction(game.Players.LocalPlayer.Kick,function()
     wait(9e9)
 end)
@@ -147,19 +147,43 @@ for i,rem in pairs(rems) do
             rem:FireServer(v)
             rem:FireServer(nil,nil,nil,moduleid)
             rem:FireServer(v,v,v,v,v,v,v)
-            task.wait(.4)
+            rem:FireServer(nil,nil,nil,v.Parent)
+            rem:FireServer(nil,nil,v.Parent)
+            rem:FireServer(nil,v.Parent)
+            rem:FireServer(v.Parent)
+            rem:FireServer(nil,nil,nil,moduleid)
+            rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
+            rem:FireServer(nil,nil,nil,v.Parent.Parent)
+            rem:FireServer(nil,nil,v.Parent.Parent)
+            rem:FireServer(nil,v.Parent.Parent)
+            rem:FireServer(v.Parent.Parent)
+            rem:FireServer(nil,nil,nil,moduleid)
+            rem:FireServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
         end
+        task.wait(.3)
     end
     if rem:IsA"RemoteFunction" then
         for i,v in pairs(fakes) do
-            lastrem=rem
+            lastrem = v
             rem:InvokeServer(nil,nil,nil,v)
-            rem:InvokeServer(nil,v)
-            rem:InvokeServer(nil,nil,v)
-            rem:InvokeServer(v)
-            rem:InvokeServer(nil,nil,nil,moduleid)
-            rem:InvokeServer(v,v,v,v,v,v,v)
-            task.wait(.2)
+rem:InvokeServer(nil,nil,v)
+rem:InvokeServer(nil,v)
+rem:InvokeServer(v)
+rem:InvokeServer(nil,nil,nil,moduleid)
+rem:InvokeServer(v,v,v,v,v,v,v)
+rem:InvokeServer(nil,nil,nil,v.Parent)
+rem:InvokeServer(nil,nil,v.Parent)
+rem:InvokeServer(nil,v.Parent)
+rem:InvokeServer(v.Parent)
+rem:InvokeServer(nil,nil,nil,moduleid)
+rem:InvokeServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
+rem:InvokeServer(nil,nil,nil,v.Parent.Parent)
+rem:InvokeServer(nil,nil,v.Parent.Parent)
+rem:InvokeServer(nil,v.Parent.Parent)
+rem:InvokeServer(v.Parent.Parent)
+rem:InvokeServer(nil,nil,nil,moduleid)
+rem:InvokeServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
         end
+        task.wait(.3)
     end
 end
