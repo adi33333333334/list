@@ -1,4 +1,4 @@
-local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
+local urlforexe = ""
 local HttpService = game:GetService("HttpService")
 local apiDump,apiDumpUrl
 if not getgenv().apidumpisloaded then
@@ -108,8 +108,8 @@ end)
 local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
-    if not v.Parent == game:GetService("RobloxReplicatedStorage") then
-        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and then
+    if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
+        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" then
             table.insert(rems, v)
         end
     end
@@ -128,7 +128,7 @@ fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
         table.insert(getgenv().excl, remi)
-        queue_on_teleport(game:HttpGet(urlforexe))
+        queue_on_teleport()
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
@@ -136,6 +136,7 @@ hookfunction(game.Players.LocalPlayer.Kick,function()
     wait(9e9)
 end)
 for i,rem in pairs(rems) do
+    print(rem:GetFullName())
     if rem:IsA"RemoteEvent" then
         remi = i
         for i,v in pairs(fakes) do
