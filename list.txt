@@ -122,13 +122,10 @@ local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
     if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
-        if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") then
+        if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") and not table.find(getgenv().excl,v.Name) then
             table.insert(rems, v)
         end
     end
-end
-for i,v in pairs(getgenv().excl) do
-    rems[v] = Instance.new'Part'
 end
 local forrealsies = {}
 local fakes = {}
@@ -140,7 +137,7 @@ end
 fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
-        table.insert(getgenv().excl, remi)
+        table.insert(getgenv().excl, lastrem.Name)
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
