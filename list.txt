@@ -3,6 +3,9 @@ if not isfolder("enigmavulnfinder") then
     makefolder("enigmavulnfinder")
     writefile(string.format("enigmavulnfinder/%s.json",tostring(game.PlaceId)),"{}")
 end
+if not isfile("enigmavulnfinder/%s.json",tostring(game.PlaceId)) then
+    writefile(string.format("enigmavulnfinder/%s.json",tostring(game.PlaceId)),"{}")
+end
 excl = game.HttpService:JSONDecode(readfile(string.format("enigmavulnfinder/%s.json",tostring(game.PlaceId)))) or {}
 repeat task.wait() until game:IsLoaded()
 local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
