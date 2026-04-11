@@ -153,7 +153,7 @@ for i,rem in pairs(rems) do
     print(rem:GetFullName())
     if rem:IsA"RemoteEvent" then
         remi = i
-        lastrem = v
+        lastrem = rem
         for i,v in pairs(fakes) do
            task.spawn(pcall,function()
 
@@ -184,7 +184,7 @@ rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
         end
     end
     if rem:IsA"RemoteFunction" then
-        lastrem = v
+        lastrem = rem
         for i,v in pairs(fakes) do
             local r,e = task.spawn(pcall,function()
             rem:InvokeServer(nil,nil,nil,v)
