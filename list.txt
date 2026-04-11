@@ -180,6 +180,7 @@ rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
     end
     if rem:IsA"RemoteFunction" then
         for i,v in pairs(fakes) do
+            local r,e = pcall(function()
             lastrem = v
             rem:InvokeServer(nil,nil,nil,v)
 rem:InvokeServer(nil,nil,v)
@@ -200,6 +201,8 @@ rem:InvokeServer(nil,v.Parent.Parent)
 rem:InvokeServer(v.Parent.Parent)
 rem:InvokeServer(nil,nil,nil,moduleid)
 rem:InvokeServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
+        end)
+        print(s or e)
         end
         task.wait(.3)
         if isvulnfound then
