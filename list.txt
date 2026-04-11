@@ -1,10 +1,9 @@
 local excl = {}
-local lastsave = game["Teleport Service"]:GetArrivingTeleportGui()
-if lastsave and lastsave:FindFirstChild'ISSAVEYES' then
-    for i,v in pairs(lastsave:GetChildren())do
-        table.insert(excl,v.Name)
-    end
+if not isfolder("enigmavulnfinder") then
+    makefolder("enigmavulnfinder")
+    writefile("enigmavulnfinder/vulnfinder.json","{}")
 end
+excl = game.HttpService:JSONDecode(readfile("enigmavulnfinder/vulnfinder.json"))[game.PlaceId] or {}
 repeat task.wait() until game:IsLoaded()
 local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
 local HttpService = game:GetService("HttpService")
@@ -142,19 +141,14 @@ fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
         table.insert(excl, lastrem.Name)
-        local save = Instance.new("ScreenGui")
-        for i=1,#excl do
-            Instance.new("Frame",save).Name = excl[i]
-        end
-        Instance.new("Frame",save).Name = "ISSAVEYES"
-        game["Teleport Service"]:SetTeleportGui(save)
+        makefolder("enigmavulnfinder")
+        writefile("enigmavulnfinder/vulnfinder.json",game.HttpService:JSONEncode(excl))
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
 hookfunction(game.Players.LocalPlayer.Kick,function()
     return wait(9e9)
 end)
-queue_on_teleport(game:HttpGet(urlforexe))
 for i,rem in pairs(rems) do
     print(rem:GetFullName())
     if rem:IsA"RemoteEvent" then
