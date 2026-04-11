@@ -1,3 +1,10 @@
+local excl = {}
+local lastsave = game["Teleport Service"]:GetArrivingTeleportGui()
+if lastsave and lastsave:FindFirstChild'ISSAVEYES' then
+    for i,v in pairs(lastsave:GetChildren())do
+        table.insert(excl,v.Name)
+    end
+end
 repeat task.wait() until game:IsLoaded()
 local urlforexe = "https://raw.githubusercontent.com/adi33333333334/list/refs/heads/main/list.txt"
 local HttpService = game:GetService("HttpService")
@@ -96,9 +103,7 @@ function check(tablee,ignorelist)
 	for i,v in pairs(tablee) do
 		if typeof(v) == "Instance" then
 			for i,v in pairs(v:GetDescendants()) do
-				if v:IsA("Script") then
-					table.insert(ignorelist, v)
-				end
+				table.insert(ignorelist, v)
 			end
 			newtablee[i] = mimicObject(v,ignorelist,true)
             else
@@ -107,7 +112,6 @@ function check(tablee,ignorelist)
 	end
 	return tablee
 end
-getgenv().excl = getgenv().excl or {}
 local lastrem = nil
 local remi = 0
 local isvulnfound = false
@@ -122,7 +126,7 @@ local placeid = game.PlaceId
 local rems = {}
 for i,v in pairs(game:GetDescendants()) do
     if not (v.Parent == game:GetService("RobloxReplicatedStorage")) then
-        if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") and not table.find(getgenv().excl,v.Name) then
+        if (v:IsA"RemoteEvent" or v:IsA"RemoteFunction") and not (v.Name:find"UpdateLabel") and not table.find(excl,v.Name) then
             table.insert(rems, v)
         end
     end
@@ -137,7 +141,13 @@ end
 fakes = check(forrealsies,{})
 game.LogService.MessageOut:connect(function(asd)
     if asd:lower():find'server kick' then
-        table.insert(getgenv().excl, lastrem.Name)
+        table.insert(excl, lastrem.Name)
+        local save = Instance.new("ScreenGui")
+        for i=1,#excl do
+            Instance.new("Frame",save).Name = excl[i]
+        end
+        Instance.new("Frame",save).Name = "ISSAVEYES"
+        game["Teleport Service"]:SetTeleportGui(save)
         game["Teleport Service"]:Teleport(placeid,game.Players.LocalPlayer)
     end
 end)
